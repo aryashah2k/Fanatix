@@ -1,0 +1,30 @@
+name: Become a Fanatic
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+  pull_request:
+    branches: [master]
+
+jobs:
+  fanatic:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install dependencies
+        run: npm ci
+      - name: Become a Fanatic
+        run: npm start
+        env:
+          STACKOVERFLOW_EMAIL: ${{ secrets.STACKOVERFLOW_EMAIL }}
+          STACKOVERFLOW_PASSWORD: ${{ secrets.STACKOVERFLOW_PASSWORD }}
+          ALTERNATIVE_URL: ${{ secrets.ALTERNATIVE_URL }}
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v2
+        with:
+          name: screenshots
+          path: '*.png'
